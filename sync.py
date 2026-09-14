@@ -134,6 +134,13 @@ OFFICIAL_MODELS = {
         "out": 50.0,
         "cache": 1.0,
         "cache_write": 12.5,
+        "tier": {
+            "threshold": 272000,
+            "in": 20.0,
+            "out": 75.0,
+            "cache": 2.0,
+            "cache_write": 25.0,
+        },
     },
     # GPT-5 系列
     "gpt-5.6-sol": {
