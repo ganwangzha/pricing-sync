@@ -106,6 +106,165 @@ OFFICIAL_MODELS = {
         "out": 0.00,
         "cache": 0.00,
     },
+    # --------------------------------------------------------------------------
+    # OpenAI 官方核心模型
+    # --------------------------------------------------------------------------
+    # GPT-6 系列
+    "gpt-6-astra": {
+        "provider": "OpenAI",
+        "in": 10.0,
+        "out": 12.5,
+        "cache": 1.0,
+    },
+    # GPT-5 系列
+    "gpt-5.6-sol": {
+        "provider": "OpenAI",
+        "in": 4.0,
+        "out": 5.0,
+        "cache": 0.4,
+    },
+    "gpt-5.6-terra": {
+        "provider": "OpenAI",
+        "in": 2.0,
+        "out": 2.5,
+        "cache": 0.2,
+    },
+    "gpt-5.6-luna": {
+        "provider": "OpenAI",
+        "in": 0.2,
+        "out": 0.25,
+        "cache": 0.02,
+    },
+    "gpt-5.4-mini": {
+        "provider": "OpenAI",
+        "in": 0.75,
+        "out": 4.5,
+        "cache": 0.075,
+    },
+    "gpt-5.2": {
+        "provider": "OpenAI",
+        "in": 1.75,
+        "out": 14.0,
+        "cache": 0.175,
+    },
+    "gpt-5": {
+        "provider": "OpenAI",
+        "in": 1.25,
+        "out": 10.0,
+        "cache": 0.125,
+    },
+    "gpt-5-mini": {
+        "provider": "OpenAI",
+        "in": 0.25,
+        "out": 2.0,
+        "cache": 0.025,
+    },
+    "gpt-5-nano": {
+        "provider": "OpenAI",
+        "in": 0.05,
+        "out": 0.40,
+        "cache": 0.005,
+    },
+    "gpt-5.3-codex": {
+        "provider": "OpenAI",
+        "in": 1.75,
+        "out": 14.0,
+        "cache": 0.175,
+    },
+    # 推理模型 (o-Series)
+    "o4-mini": {
+        "provider": "OpenAI",
+        "in": 1.10,
+        "out": 4.40,
+        "cache": 0.275,
+    },
+    "o3-mini": {
+        "provider": "OpenAI",
+        "in": 1.10,
+        "out": 4.40,
+        "cache": 0.55,
+    },
+    "o3": {
+        "provider": "OpenAI",
+        "in": 2.00,
+        "out": 8.00,
+        "cache": 0.50,
+    },
+    "o3-pro": {
+        "provider": "OpenAI",
+        "in": 20.0,
+        "out": 80.0,
+        "cache": 0.0,
+    },
+    "o1": {
+        "provider": "OpenAI",
+        "in": 15.0,
+        "out": 60.0,
+        "cache": 7.5,
+    },
+    "o1-pro": {
+        "provider": "OpenAI",
+        "in": 150.0,
+        "out": 600.0,
+        "cache": 0.0,
+    },
+    # GPT-4.1 系列
+    "gpt-4.1": {
+        "provider": "OpenAI",
+        "in": 2.00,
+        "out": 8.00,
+        "cache": 0.50,
+    },
+    "gpt-4.1-mini": {
+        "provider": "OpenAI",
+        "in": 0.40,
+        "out": 1.60,
+        "cache": 0.10,
+    },
+    "gpt-4.1-nano": {
+        "provider": "OpenAI",
+        "in": 0.10,
+        "out": 0.40,
+        "cache": 0.025,
+    },
+    # 经典主力模型
+    "gpt-4o": {
+        "provider": "OpenAI",
+        "in": 2.50,
+        "out": 10.00,
+        "cache": 1.25,
+    },
+    "gpt-4o-mini": {
+        "provider": "OpenAI",
+        "in": 0.15,
+        "out": 0.60,
+        "cache": 0.075,
+    },
+    "gpt-4-turbo": {
+        "provider": "OpenAI",
+        "in": 10.0,
+        "out": 30.0,
+        "cache": 0.0,
+    },
+    "gpt-3.5-turbo": {
+        "provider": "OpenAI",
+        "in": 0.50,
+        "out": 1.50,
+        "cache": 0.0,
+    },
+    # 向量嵌入
+    "text-embedding-3-small": {
+        "provider": "OpenAI",
+        "in": 0.02,
+        "out": 0.0,
+        "cache": 0.0,
+    },
+    "text-embedding-3-large": {
+        "provider": "OpenAI",
+        "in": 0.13,
+        "out": 0.0,
+        "cache": 0.0,
+    },
 }
 
 

@@ -4,5 +4,11 @@
     "url": "https://ai.google.dev/gemini-api/docs/pricing",
     "currency": "USD",
     "description": "Google AI Studio / Gemini 定价（Gemini 1.5 Pro, Flash, 2.0 Flash 等）"
+  },
+  {
+    "provider": "OpenAI",
+    "url": "https://openai.com/api/pricing/",
+    "currency": "USD",
+    "description": "OpenAI 定价"
   }
 ]

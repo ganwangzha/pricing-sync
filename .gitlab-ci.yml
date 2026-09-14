@@ -1,0 +1,32 @@
+# GitLab CI/CD 配置
+# 1. 自动校验 ratio_config.json 格式
+# 2. (可选) 发布为 GitLab Pages 纯静态网站
+
+stages:
+  - test
+  - deploy
+
+validate_json:
+  stage: test
+  image: python:3.11-alpine
+  script:
+    - python3 -c "import json; d = json.load(open('ratio_config.json')); assert d.get('success') is True, '缺少 success 字段'; assert 'model_ratio' in d.get('data', {}), '缺少 model_ratio 字段'; print('✅ JSON 格式校验通过！')"
+  only:
+    changes:
+      - ratio_config.json
+      - overrides.json
+      - providers.json
+
+pages:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - mkdir -p public
+    - cp ratio_config.json public/
+    - cp -r providers.json overrides.json public/ || true
+    - echo "<html><body><h1>Pricing Sync Ready</h1><p><a href='ratio_config.json'>ratio_config.json</a></p></body></html>" > public/index.html
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
