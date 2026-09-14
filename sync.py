@@ -405,14 +405,23 @@ def calculate_ratios(raw_price: Dict[str, Any]) -> Tuple[float, float, float]:
     return model_ratio, completion_ratio, cache_ratio
 
 
+def fmt_num(val: float) -> str:
+    """格式化单价值，整数转为 int 去掉多余 .0，小数去除无效尾随 0"""
+    if val == int(val):
+        return str(int(val))
+    return f"{val:.6f}".rstrip("0").rstrip(".")
+
+
 def generate_billing_expr(raw_price: Dict[str, Any]) -> Optional[str]:
     """
     根据 New API (QuantumNous/new-api) 官方规范 (pkg/billingexpr/expr.md)
-    为具备长上下文阶梯特性的模型生成自包含的 expr-lang 定价表达式
-    变量标准:
-      - p: prompt tokens (普通输入)
-      - cr: cache read tokens (缓存读取)
-      - c: completion tokens (输出生成，包含思考)
+    为具备长上下文阶梯特性的模型生成自包含的 expr-lang 规范表达式
+    规范标准：
+      - 判断条件使用 len（上下文输入总长度），而非会被自动扣减的 p
+      - 必须由 tier("标签名", 公式) 函数包裹，用于审计与日志记录档位
+      - 单价为官方 $/1M tokens 真实价格，不需要且严禁外层除以 1000000
+    示例：
+      len <= 272000 ? tier("0_272k", p * 2.5 + c * 15 + cr * 0.25) : tier("272k_plus", p * 5 + c * 22.5 + cr * 0.5)
     """
     tier = raw_price.get("tier")
     if not tier:
@@ -422,16 +431,28 @@ def generate_billing_expr(raw_price: Dict[str, Any]) -> Optional[str]:
     rate = CNY_TO_USD if currency == "CNY" else 1.0
 
     threshold = tier["threshold"]
-    p1 = round(raw_price["in"] * rate, 4)
-    cr1 = round(raw_price.get("cache", 0.0) * rate, 4)
-    c1 = round(raw_price["out"] * rate, 4)
+    t_k = int(threshold / 1000)
+    tier1_name = f"0_{t_k}k"
+    tier2_name = f"{t_k}k_plus"
 
-    p2 = round(tier["in"] * rate, 4)
-    cr2 = round(tier.get("cache", 0.0) * rate, 4)
-    c2 = round(tier["out"] * rate, 4)
+    p1 = raw_price["in"] * rate
+    c1 = raw_price["out"] * rate
+    cr1 = raw_price.get("cache", 0.0) * rate
 
-    # 构造 New API 规范的三元分段表达式 (系数为真实 USD/1M tokens)
-    expr = f"((p + cr) <= {threshold} ? (p * {p1} + cr * {cr1} + c * {c1}) : (p * {p2} + cr * {cr2} + c * {c2})) / 1000000"
+    p2 = tier["in"] * rate
+    c2 = tier["out"] * rate
+    cr2 = tier.get("cache", 0.0) * rate
+
+    def build_tier_expr(p_val: float, c_val: float, cr_val: float) -> str:
+        parts = [f"p * {fmt_num(p_val)}", f"c * {fmt_num(c_val)}"]
+        if cr_val > 0:
+            parts.append(f"cr * {fmt_num(cr_val)}")
+        return " + ".join(parts)
+
+    cost1 = build_tier_expr(p1, c1, cr1)
+    cost2 = build_tier_expr(p2, c2, cr2)
+
+    expr = f'len <= {threshold} ? tier("{tier1_name}", {cost1}) : tier("{tier2_name}", {cost2})'
     return expr
 
 
