@@ -72,6 +72,12 @@ OFFICIAL_MODELS = {
         "in": 2.00,
         "out": 12.00,
         "cache": 0.20,
+        "tier": {
+            "threshold": 200000,
+            "in": 4.00,
+            "out": 18.00,
+            "cache": 0.40,
+        },
     },
     # Gemini 3 Flash Preview
     "gemini-3-flash-preview": {
@@ -86,6 +92,12 @@ OFFICIAL_MODELS = {
         "in": 1.25,
         "out": 10.00,
         "cache": 0.125,
+        "tier": {
+            "threshold": 200000,
+            "in": 2.50,
+            "out": 15.00,
+            "cache": 0.25,
+        },
     },
     "gemini-2.5-flash": {
         "provider": "Google-Gemini",
@@ -98,6 +110,12 @@ OFFICIAL_MODELS = {
         "in": 0.10,
         "out": 0.40,
         "cache": 0.01,
+    },
+    "gemini-omni-flash": {
+        "provider": "Google-Gemini",
+        "in": 1.50,
+        "out": 9.00,
+        "cache": 0.15,
     },
     # 向量嵌入
     "gemini-embedding-2": {
@@ -122,18 +140,90 @@ OFFICIAL_MODELS = {
         "in": 4.0,
         "out": 20.0,
         "cache": 0.4,
+        "tier": {
+            "threshold": 272000,
+            "in": 8.0,
+            "out": 30.0,
+            "cache": 0.8,
+        },
     },
     "gpt-5.6-terra": {
         "provider": "OpenAI",
         "in": 2.0,
         "out": 12.0,
         "cache": 0.2,
+        "tier": {
+            "threshold": 272000,
+            "in": 4.0,
+            "out": 18.0,
+            "cache": 0.4,
+        },
     },
     "gpt-5.6-luna": {
         "provider": "OpenAI",
         "in": 0.2,
         "out": 1.2,
         "cache": 0.02,
+        "tier": {
+            "threshold": 272000,
+            "in": 0.4,
+            "out": 1.8,
+            "cache": 0.04,
+        },
+    },
+    "gpt-5.6-cyber": {
+        "provider": "OpenAI",
+        "in": 12.5,
+        "out": 75.0,
+        "cache": 1.25,
+    },
+    "gpt-5.5": {
+        "provider": "OpenAI",
+        "in": 5.0,
+        "out": 30.0,
+        "cache": 0.5,
+        "tier": {
+            "threshold": 272000,
+            "in": 10.0,
+            "out": 45.0,
+            "cache": 1.0,
+        },
+    },
+    "gpt-5.5-pro": {
+        "provider": "OpenAI",
+        "in": 30.0,
+        "out": 180.0,
+        "cache": 0.0,
+        "tier": {
+            "threshold": 272000,
+            "in": 60.0,
+            "out": 270.0,
+            "cache": 0.0,
+        },
+    },
+    "gpt-5.4": {
+        "provider": "OpenAI",
+        "in": 2.5,
+        "out": 15.0,
+        "cache": 0.25,
+        "tier": {
+            "threshold": 272000,
+            "in": 5.0,
+            "out": 22.5,
+            "cache": 0.5,
+        },
+    },
+    "gpt-5.4-pro": {
+        "provider": "OpenAI",
+        "in": 30.0,
+        "out": 180.0,
+        "cache": 0.0,
+        "tier": {
+            "threshold": 272000,
+            "in": 60.0,
+            "out": 270.0,
+            "cache": 0.0,
+        },
     },
     "gpt-5.4-mini": {
         "provider": "OpenAI",
@@ -152,6 +242,12 @@ OFFICIAL_MODELS = {
         "in": 1.75,
         "out": 14.0,
         "cache": 0.175,
+    },
+    "gpt-5.1": {
+        "provider": "OpenAI",
+        "in": 1.25,
+        "out": 10.0,
+        "cache": 0.125,
     },
     "gpt-5": {
         "provider": "OpenAI",
@@ -271,6 +367,12 @@ OFFICIAL_MODELS = {
         "out": 0.0,
         "cache": 0.0,
     },
+    "text-embedding-ada-002": {
+        "provider": "OpenAI",
+        "in": 0.10,
+        "out": 0.0,
+        "cache": 0.0,
+    },
 }
 
 
@@ -303,6 +405,36 @@ def calculate_ratios(raw_price: Dict[str, Any]) -> Tuple[float, float, float]:
     return model_ratio, completion_ratio, cache_ratio
 
 
+def generate_billing_expr(raw_price: Dict[str, Any]) -> Optional[str]:
+    """
+    根据 New API (QuantumNous/new-api) 官方规范 (pkg/billingexpr/expr.md)
+    为具备长上下文阶梯特性的模型生成自包含的 expr-lang 定价表达式
+    变量标准:
+      - p: prompt tokens (普通输入)
+      - cr: cache read tokens (缓存读取)
+      - c: completion tokens (输出生成，包含思考)
+    """
+    tier = raw_price.get("tier")
+    if not tier:
+        return None
+
+    currency = raw_price.get("cur", "USD")
+    rate = CNY_TO_USD if currency == "CNY" else 1.0
+
+    threshold = tier["threshold"]
+    p1 = round(raw_price["in"] * rate, 4)
+    cr1 = round(raw_price.get("cache", 0.0) * rate, 4)
+    c1 = round(raw_price["out"] * rate, 4)
+
+    p2 = round(tier["in"] * rate, 4)
+    cr2 = round(tier.get("cache", 0.0) * rate, 4)
+    c2 = round(tier["out"] * rate, 4)
+
+    # 构造 New API 规范的三元分段表达式 (系数为真实 USD/1M tokens)
+    expr = f"((p + cr) <= {threshold} ? (p * {p1} + cr * {cr1} + c * {c1}) : (p * {p2} + cr * {cr2} + c * {c2})) / 1000000"
+    return expr
+
+
 def main():
     parser = argparse.ArgumentParser(description="New API 价格同步工具")
     parser.add_argument("--provider", type=str, default=None, help="仅测试或更新指定的厂商（例如 DeepSeek, OpenAI 等）")
@@ -312,10 +444,13 @@ def main():
     target_provider = args.provider.lower() if args.provider else None
 
     print("🚀 启动 New API 价格同步工具 (pricing-sync)...")
+    providers = load_json(PROVIDERS_FILE, [])
     if target_provider:
         print(f"🎯 单厂商测试模式: [{args.provider}]")
     else:
-        print(f"📦 官方核心厂商模式 (已配置厂商: {len(load_json(PROVIDERS_FILE, []))} 家)")
+        print(f"📦 官方核心厂商模式 (已配置厂商: {len(providers)} 家)")
+        for p in providers:
+            print(f"  🌐 官网数据源: {p.get('provider')} -> {p.get('url')}")
     print(f"💵 汇率基准: 1 USD = {DEFAULT_USD_TO_CNY} RMB")
 
     # 1. 过滤模型池
@@ -334,10 +469,12 @@ def main():
             print(f"  - {p}")
         return
 
-    # 2. 计算各模型的比率
+    # 2. 计算各模型的比率与阶梯表达式
     model_ratio_map: Dict[str, float] = {}
     completion_ratio_map: Dict[str, float] = {}
     cache_ratio_map: Dict[str, float] = {}
+    billing_mode_map: Dict[str, str] = {}
+    billing_expr_map: Dict[str, str] = {}
 
     for model_name, raw in models_to_process.items():
         m_ratio, c_ratio, ca_ratio = calculate_ratios(raw)
@@ -346,6 +483,12 @@ def main():
             completion_ratio_map[model_name] = c_ratio
         if ca_ratio > 0:
             cache_ratio_map[model_name] = ca_ratio
+
+        # 检查是否包含阶梯定义并生成表达式
+        expr = generate_billing_expr(raw)
+        if expr:
+            billing_mode_map[model_name] = "tiered_expr"
+            billing_expr_map[model_name] = expr
 
     # 3. 合并本地 overrides.json
     overrides = load_json(OVERRIDES_FILE, default={})
@@ -360,12 +503,18 @@ def main():
             completion_ratio_map.update(overrides["completion_ratio"])
         if "cache_ratio" in overrides:
             cache_ratio_map.update(overrides["cache_ratio"])
+        if "billing_mode" in overrides:
+            billing_mode_map.update(overrides["billing_mode"])
+        if "billing_expr" in overrides:
+            billing_expr_map.update(overrides["billing_expr"])
 
     # 4. 排序字典
     sorted_model_ratio = dict(sorted(model_ratio_map.items()))
     sorted_completion_ratio = dict(sorted(completion_ratio_map.items()))
     sorted_cache_ratio = dict(sorted(cache_ratio_map.items()))
     sorted_model_price = dict(sorted(model_price_map.items()))
+    sorted_billing_mode = dict(sorted(billing_mode_map.items()))
+    sorted_billing_expr = dict(sorted(billing_expr_map.items()))
 
     # 5. 构建标准输出载荷
     output_payload = {
@@ -375,7 +524,9 @@ def main():
             "model_ratio": sorted_model_ratio,
             "completion_ratio": sorted_completion_ratio,
             "cache_ratio": sorted_cache_ratio,
-            "model_price": sorted_model_price
+            "model_price": sorted_model_price,
+            "billing_mode": sorted_billing_mode,
+            "billing_expr": sorted_billing_expr,
         }
     }
 
@@ -397,24 +548,30 @@ def main():
         json.dump(output_payload, f, ensure_ascii=False, indent=2)
 
     print(f"\n✅ 成功输出目标文件: {OUTPUT_FILE}")
-    print(f"📊 统计总览: 当前保留按量模型 {len(sorted_model_ratio)} 个，按次模型 {len(sorted_model_price)} 个")
+    print(f"📊 统计总览: 当前保留按量模型 {len(sorted_model_ratio)} 个，阶梯表达式模型 {len(sorted_billing_expr)} 个，按次模型 {len(sorted_model_price)} 个")
 
     # 8. 打印核对简报
     print("\n" + "="*55)
-    print("📋【模型价格与倍率清单】")
+    print("📋【模型价格与倍率清单 (默认/基础阶梯)】")
     print("="*55)
     for m, r in sorted_model_ratio.items():
         comp = sorted_completion_ratio.get(m, 1.0)
         cache = sorted_cache_ratio.get(m, 0.0)
-        print(f"  * {m:<30} 输入: {r:<10} 补全: {comp:<8} 缓存: {cache}")
+        mode = f"[{sorted_billing_mode.get(m)}]" if m in sorted_billing_mode else ""
+        print(f"  * {m:<28} 输入: {r:<8} 补全: {comp:<7} 缓存: {cache:<6} {mode}")
+
+    if sorted_billing_expr:
+        print(f"\n⚡ [New API 阶梯计费表达式 ({len(sorted_billing_expr)} 个)]:")
+        for m, expr in sorted_billing_expr.items():
+            print(f"  ⚡ {m}:\n     -> {expr}")
 
     if sorted_model_price:
         print(f"\n🎁 [按次计费模型 ({len(sorted_model_price)} 个)]:")
         for m, price in sorted_model_price.items():
-            print(f"  $ {m:<30} 单次价格: ${price}")
+            print(f"  $ {m:<28} 单次价格: ${price}")
 
     print("="*55)
-    print("💡 状态: 数据已精简，完全受你掌控，随时准备接受单官网测试！\n")
+    print("💡 状态: 阶梯表达式与静态倍率双重支持已就绪！\n")
 
 
 if __name__ == "__main__":

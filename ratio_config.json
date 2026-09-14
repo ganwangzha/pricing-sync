@@ -1,6 +1,6 @@
 {
   "success": true,
-  "message": "Updated at 2026-09-14 16:15:52",
+  "message": "Updated at 2026-09-14 16:55:56",
   "data": {
     "model_ratio": {
       "gemini-2.5-flash": 0.15,
@@ -15,6 +15,7 @@
       "gemini-3.7-flash": 0.375,
       "gemini-3.8-flash": 0.375,
       "gemini-embedding-2": 0.1,
+      "gemini-omni-flash": 0.75,
       "gpt-3.5-turbo": 0.25,
       "gpt-4-turbo": 5.0,
       "gpt-4.1": 1.0,
@@ -25,10 +26,16 @@
       "gpt-5": 0.625,
       "gpt-5-mini": 0.125,
       "gpt-5-nano": 0.025,
+      "gpt-5.1": 0.625,
       "gpt-5.2": 0.875,
       "gpt-5.3-codex": 0.875,
+      "gpt-5.4": 1.25,
       "gpt-5.4-mini": 0.375,
       "gpt-5.4-nano": 0.1,
+      "gpt-5.4-pro": 15.0,
+      "gpt-5.5": 2.5,
+      "gpt-5.5-pro": 15.0,
+      "gpt-5.6-cyber": 6.25,
       "gpt-5.6-luna": 0.1,
       "gpt-5.6-sol": 2.0,
       "gpt-5.6-terra": 1.0,
@@ -40,7 +47,8 @@
       "o3-pro": 10.0,
       "o4-mini": 0.55,
       "text-embedding-3-large": 0.065,
-      "text-embedding-3-small": 0.01
+      "text-embedding-3-small": 0.01,
+      "text-embedding-ada-002": 0.05
     },
     "completion_ratio": {
       "gemini-2.5-flash": 8.3333,
@@ -54,6 +62,7 @@
       "gemini-3.6-flash": 5.0,
       "gemini-3.7-flash": 5.0,
       "gemini-3.8-flash": 5.0,
+      "gemini-omni-flash": 6.0,
       "gpt-3.5-turbo": 3.0,
       "gpt-4-turbo": 3.0,
       "gpt-4.1": 4.0,
@@ -64,10 +73,16 @@
       "gpt-5": 8.0,
       "gpt-5-mini": 8.0,
       "gpt-5-nano": 8.0,
+      "gpt-5.1": 8.0,
       "gpt-5.2": 8.0,
       "gpt-5.3-codex": 8.0,
+      "gpt-5.4": 6.0,
       "gpt-5.4-mini": 6.0,
       "gpt-5.4-nano": 6.25,
+      "gpt-5.4-pro": 6.0,
+      "gpt-5.5": 6.0,
+      "gpt-5.5-pro": 6.0,
+      "gpt-5.6-cyber": 6.0,
       "gpt-5.6-luna": 6.0,
       "gpt-5.6-sol": 5.0,
       "gpt-5.6-terra": 6.0,
@@ -91,6 +106,7 @@
       "gemini-3.6-flash": 0.1,
       "gemini-3.7-flash": 0.1,
       "gemini-3.8-flash": 0.1,
+      "gemini-omni-flash": 0.1,
       "gpt-4.1": 0.25,
       "gpt-4.1-mini": 0.25,
       "gpt-4.1-nano": 0.25,
@@ -99,10 +115,14 @@
       "gpt-5": 0.1,
       "gpt-5-mini": 0.1,
       "gpt-5-nano": 0.1,
+      "gpt-5.1": 0.1,
       "gpt-5.2": 0.1,
       "gpt-5.3-codex": 0.1,
+      "gpt-5.4": 0.1,
       "gpt-5.4-mini": 0.1,
       "gpt-5.4-nano": 0.1,
+      "gpt-5.5": 0.1,
+      "gpt-5.6-cyber": 0.1,
       "gpt-5.6-luna": 0.1,
       "gpt-5.6-sol": 0.1,
       "gpt-5.6-terra": 0.1,
@@ -112,6 +132,28 @@
       "o3-mini": 0.5,
       "o4-mini": 0.25
     },
-    "model_price": {}
+    "model_price": {},
+    "billing_mode": {
+      "gemini-2.5-pro": "tiered_expr",
+      "gemini-3.1-pro-preview": "tiered_expr",
+      "gpt-5.4": "tiered_expr",
+      "gpt-5.4-pro": "tiered_expr",
+      "gpt-5.5": "tiered_expr",
+      "gpt-5.5-pro": "tiered_expr",
+      "gpt-5.6-luna": "tiered_expr",
+      "gpt-5.6-sol": "tiered_expr",
+      "gpt-5.6-terra": "tiered_expr"
+    },
+    "billing_expr": {
+      "gemini-2.5-pro": "((p + cr) <= 200000 ? (p * 1.25 + cr * 0.125 + c * 10.0) : (p * 2.5 + cr * 0.25 + c * 15.0)) / 1000000",
+      "gemini-3.1-pro-preview": "((p + cr) <= 200000 ? (p * 2.0 + cr * 0.2 + c * 12.0) : (p * 4.0 + cr * 0.4 + c * 18.0)) / 1000000",
+      "gpt-5.4": "((p + cr) <= 272000 ? (p * 2.5 + cr * 0.25 + c * 15.0) : (p * 5.0 + cr * 0.5 + c * 22.5)) / 1000000",
+      "gpt-5.4-pro": "((p + cr) <= 272000 ? (p * 30.0 + cr * 0.0 + c * 180.0) : (p * 60.0 + cr * 0.0 + c * 270.0)) / 1000000",
+      "gpt-5.5": "((p + cr) <= 272000 ? (p * 5.0 + cr * 0.5 + c * 30.0) : (p * 10.0 + cr * 1.0 + c * 45.0)) / 1000000",
+      "gpt-5.5-pro": "((p + cr) <= 272000 ? (p * 30.0 + cr * 0.0 + c * 180.0) : (p * 60.0 + cr * 0.0 + c * 270.0)) / 1000000",
+      "gpt-5.6-luna": "((p + cr) <= 272000 ? (p * 0.2 + cr * 0.02 + c * 1.2) : (p * 0.4 + cr * 0.04 + c * 1.8)) / 1000000",
+      "gpt-5.6-sol": "((p + cr) <= 272000 ? (p * 4.0 + cr * 0.4 + c * 20.0) : (p * 8.0 + cr * 0.8 + c * 30.0)) / 1000000",
+      "gpt-5.6-terra": "((p + cr) <= 272000 ? (p * 2.0 + cr * 0.2 + c * 12.0) : (p * 4.0 + cr * 0.4 + c * 18.0)) / 1000000"
+    }
   }
 }
