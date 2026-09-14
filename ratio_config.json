@@ -1,0 +1,47 @@
+{
+  "success": true,
+  "message": "Updated at 2026-09-14 14:55:59",
+  "data": {
+    "model_ratio": {
+      "gemini-2.5-flash": 0.15,
+      "gemini-2.5-flash-lite": 0.05,
+      "gemini-2.5-pro": 0.625,
+      "gemini-3-flash-preview": 0.25,
+      "gemini-3.1-flash-lite": 0.125,
+      "gemini-3.1-pro-preview": 1.0,
+      "gemini-3.5-flash": 0.75,
+      "gemini-3.5-flash-lite": 0.15,
+      "gemini-3.6-flash": 0.375,
+      "gemini-3.7-flash": 0.375,
+      "gemini-3.8-flash": 0.375,
+      "gemini-embedding-2": 0.1
+    },
+    "completion_ratio": {
+      "gemini-2.5-flash": 8.3333,
+      "gemini-2.5-flash-lite": 4.0,
+      "gemini-2.5-pro": 8.0,
+      "gemini-3-flash-preview": 6.0,
+      "gemini-3.1-flash-lite": 6.0,
+      "gemini-3.1-pro-preview": 6.0,
+      "gemini-3.5-flash": 6.0,
+      "gemini-3.5-flash-lite": 8.3333,
+      "gemini-3.6-flash": 5.0,
+      "gemini-3.7-flash": 5.0,
+      "gemini-3.8-flash": 5.0
+    },
+    "cache_ratio": {
+      "gemini-2.5-flash": 0.1,
+      "gemini-2.5-flash-lite": 0.1,
+      "gemini-2.5-pro": 0.1,
+      "gemini-3-flash-preview": 0.1,
+      "gemini-3.1-flash-lite": 0.1,
+      "gemini-3.1-pro-preview": 0.1,
+      "gemini-3.5-flash": 0.1,
+      "gemini-3.5-flash-lite": 0.1,
+      "gemini-3.6-flash": 0.1,
+      "gemini-3.7-flash": 0.1,
+      "gemini-3.8-flash": 0.1
+    },
+    "model_price": {}
+  }
+}
