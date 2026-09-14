@@ -1,6 +1,6 @@
 {
   "success": true,
-  "message": "Updated at 2026-09-14 17:02:04",
+  "message": "Updated at 2026-09-14 17:46:41",
   "data": {
     "model_ratio": {
       "gemini-2.5-flash": 0.15,
@@ -132,6 +132,13 @@
       "o3-mini": 0.5,
       "o4-mini": 0.25
     },
+    "create_cache_ratio": {
+      "gpt-5.6-cyber": 1.25,
+      "gpt-5.6-luna": 1.25,
+      "gpt-5.6-sol": 1.25,
+      "gpt-5.6-terra": 1.25,
+      "gpt-6-astra": 1.25
+    },
     "model_price": {},
     "billing_mode": {
       "gemini-2.5-pro": "tiered_expr",
@@ -151,9 +158,9 @@
       "gpt-5.4-pro": "len <= 272000 ? tier(\"0_272k\", p * 30 + c * 180) : tier(\"272k_plus\", p * 60 + c * 270)",
       "gpt-5.5": "len <= 272000 ? tier(\"0_272k\", p * 5 + c * 30 + cr * 0.5) : tier(\"272k_plus\", p * 10 + c * 45 + cr * 1)",
       "gpt-5.5-pro": "len <= 272000 ? tier(\"0_272k\", p * 30 + c * 180) : tier(\"272k_plus\", p * 60 + c * 270)",
-      "gpt-5.6-luna": "len <= 272000 ? tier(\"0_272k\", p * 0.2 + c * 1.2 + cr * 0.02) : tier(\"272k_plus\", p * 0.4 + c * 1.8 + cr * 0.04)",
-      "gpt-5.6-sol": "len <= 272000 ? tier(\"0_272k\", p * 4 + c * 20 + cr * 0.4) : tier(\"272k_plus\", p * 8 + c * 30 + cr * 0.8)",
-      "gpt-5.6-terra": "len <= 272000 ? tier(\"0_272k\", p * 2 + c * 12 + cr * 0.2) : tier(\"272k_plus\", p * 4 + c * 18 + cr * 0.4)"
+      "gpt-5.6-luna": "len <= 272000 ? tier(\"0_272k\", p * 0.2 + c * 1.2 + cr * 0.02 + cc * 0.25) : tier(\"272k_plus\", p * 0.4 + c * 1.8 + cr * 0.04 + cc * 0.5)",
+      "gpt-5.6-sol": "len <= 272000 ? tier(\"0_272k\", p * 4 + c * 20 + cr * 0.4 + cc * 5) : tier(\"272k_plus\", p * 8 + c * 30 + cr * 0.8 + cc * 10)",
+      "gpt-5.6-terra": "len <= 272000 ? tier(\"0_272k\", p * 2 + c * 12 + cr * 0.2 + cc * 2.5) : tier(\"272k_plus\", p * 4 + c * 18 + cr * 0.4 + cc * 5)"
     }
   }
 }

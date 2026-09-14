@@ -3,6 +3,7 @@
   "model_ratio": {},
   "completion_ratio": {},
   "cache_ratio": {},
+  "create_cache_ratio": {},
   "billing_mode": {},
   "billing_expr": {}
 }

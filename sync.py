@@ -133,6 +133,7 @@ OFFICIAL_MODELS = {
         "in": 10.0,
         "out": 50.0,
         "cache": 1.0,
+        "cache_write": 12.5,
     },
     # GPT-5 系列
     "gpt-5.6-sol": {
@@ -140,11 +141,13 @@ OFFICIAL_MODELS = {
         "in": 4.0,
         "out": 20.0,
         "cache": 0.4,
+        "cache_write": 5.0,
         "tier": {
             "threshold": 272000,
             "in": 8.0,
             "out": 30.0,
             "cache": 0.8,
+            "cache_write": 10.0,
         },
     },
     "gpt-5.6-terra": {
@@ -152,11 +155,13 @@ OFFICIAL_MODELS = {
         "in": 2.0,
         "out": 12.0,
         "cache": 0.2,
+        "cache_write": 2.5,
         "tier": {
             "threshold": 272000,
             "in": 4.0,
             "out": 18.0,
             "cache": 0.4,
+            "cache_write": 5.0,
         },
     },
     "gpt-5.6-luna": {
@@ -164,11 +169,13 @@ OFFICIAL_MODELS = {
         "in": 0.2,
         "out": 1.2,
         "cache": 0.02,
+        "cache_write": 0.25,
         "tier": {
             "threshold": 272000,
             "in": 0.4,
             "out": 1.8,
             "cache": 0.04,
+            "cache_write": 0.5,
         },
     },
     "gpt-5.6-cyber": {
@@ -176,6 +183,7 @@ OFFICIAL_MODELS = {
         "in": 12.5,
         "out": 75.0,
         "cache": 1.25,
+        "cache_write": 15.625,
     },
     "gpt-5.5": {
         "provider": "OpenAI",
@@ -387,22 +395,24 @@ def load_json(filepath: str, default: Any = None) -> Any:
         return default if default is not None else {}
 
 
-def calculate_ratios(raw_price: Dict[str, Any]) -> Tuple[float, float, float]:
+def calculate_ratios(raw_price: Dict[str, Any]) -> Tuple[float, float, float, float]:
     currency = raw_price.get("cur", "USD")
     rate = CNY_TO_USD if currency == "CNY" else 1.0
 
     inp_usd = raw_price["in"] * rate
     out_usd = raw_price["out"] * rate
     cache_usd = raw_price.get("cache", 0.0) * rate
+    cache_write_usd = raw_price.get("cache_write", 0.0) * rate
 
     if inp_usd == 0:
-        return 0.0, 0.0, 0.0
+        return 0.0, 0.0, 0.0, 0.0
 
     model_ratio = round(inp_usd / 2.0, 6)
     completion_ratio = round(out_usd / inp_usd, 4)
     cache_ratio = round(cache_usd / inp_usd, 4) if cache_usd > 0 else 0.0
+    create_cache_ratio = round(cache_write_usd / inp_usd, 4) if cache_write_usd > 0 else 0.0
 
-    return model_ratio, completion_ratio, cache_ratio
+    return model_ratio, completion_ratio, cache_ratio, create_cache_ratio
 
 
 def fmt_num(val: float) -> str:
@@ -419,9 +429,10 @@ def generate_billing_expr(raw_price: Dict[str, Any]) -> Optional[str]:
     规范标准：
       - 判断条件使用 len（上下文输入总长度），而非会被自动扣减的 p
       - 必须由 tier("标签名", 公式) 函数包裹，用于审计与日志记录档位
+      - 变量规范：p(输入), c(补全), cr(缓存读), cc(缓存创建/写)
       - 单价为官方 $/1M tokens 真实价格，不需要且严禁外层除以 1000000
     示例：
-      len <= 272000 ? tier("0_272k", p * 2.5 + c * 15 + cr * 0.25) : tier("272k_plus", p * 5 + c * 22.5 + cr * 0.5)
+      len <= 272000 ? tier("0_272k", p * 4 + c * 20 + cr * 0.4 + cc * 5) : tier("272k_plus", p * 8 + c * 30 + cr * 0.8 + cc * 10)
     """
     tier = raw_price.get("tier")
     if not tier:
@@ -438,19 +449,23 @@ def generate_billing_expr(raw_price: Dict[str, Any]) -> Optional[str]:
     p1 = raw_price["in"] * rate
     c1 = raw_price["out"] * rate
     cr1 = raw_price.get("cache", 0.0) * rate
+    cc1 = raw_price.get("cache_write", 0.0) * rate
 
     p2 = tier["in"] * rate
     c2 = tier["out"] * rate
     cr2 = tier.get("cache", 0.0) * rate
+    cc2 = tier.get("cache_write", 0.0) * rate
 
-    def build_tier_expr(p_val: float, c_val: float, cr_val: float) -> str:
+    def build_tier_expr(p_val: float, c_val: float, cr_val: float, cc_val: float) -> str:
         parts = [f"p * {fmt_num(p_val)}", f"c * {fmt_num(c_val)}"]
         if cr_val > 0:
             parts.append(f"cr * {fmt_num(cr_val)}")
+        if cc_val > 0:
+            parts.append(f"cc * {fmt_num(cc_val)}")
         return " + ".join(parts)
 
-    cost1 = build_tier_expr(p1, c1, cr1)
-    cost2 = build_tier_expr(p2, c2, cr2)
+    cost1 = build_tier_expr(p1, c1, cr1, cc1)
+    cost2 = build_tier_expr(p2, c2, cr2, cc2)
 
     expr = f'len <= {threshold} ? tier("{tier1_name}", {cost1}) : tier("{tier2_name}", {cost2})'
     return expr
@@ -494,16 +509,19 @@ def main():
     model_ratio_map: Dict[str, float] = {}
     completion_ratio_map: Dict[str, float] = {}
     cache_ratio_map: Dict[str, float] = {}
+    create_cache_ratio_map: Dict[str, float] = {}
     billing_mode_map: Dict[str, str] = {}
     billing_expr_map: Dict[str, str] = {}
 
     for model_name, raw in models_to_process.items():
-        m_ratio, c_ratio, ca_ratio = calculate_ratios(raw)
+        m_ratio, c_ratio, ca_ratio, cc_ratio = calculate_ratios(raw)
         model_ratio_map[model_name] = m_ratio
         if c_ratio > 0:
             completion_ratio_map[model_name] = c_ratio
         if ca_ratio > 0:
             cache_ratio_map[model_name] = ca_ratio
+        if cc_ratio > 0:
+            create_cache_ratio_map[model_name] = cc_ratio
 
         # 检查是否包含阶梯定义并生成表达式
         expr = generate_billing_expr(raw)
@@ -524,6 +542,8 @@ def main():
             completion_ratio_map.update(overrides["completion_ratio"])
         if "cache_ratio" in overrides:
             cache_ratio_map.update(overrides["cache_ratio"])
+        if "create_cache_ratio" in overrides:
+            create_cache_ratio_map.update(overrides["create_cache_ratio"])
         if "billing_mode" in overrides:
             billing_mode_map.update(overrides["billing_mode"])
         if "billing_expr" in overrides:
@@ -533,6 +553,7 @@ def main():
     sorted_model_ratio = dict(sorted(model_ratio_map.items()))
     sorted_completion_ratio = dict(sorted(completion_ratio_map.items()))
     sorted_cache_ratio = dict(sorted(cache_ratio_map.items()))
+    sorted_create_cache_ratio = dict(sorted(create_cache_ratio_map.items()))
     sorted_model_price = dict(sorted(model_price_map.items()))
     sorted_billing_mode = dict(sorted(billing_mode_map.items()))
     sorted_billing_expr = dict(sorted(billing_expr_map.items()))
@@ -545,6 +566,7 @@ def main():
             "model_ratio": sorted_model_ratio,
             "completion_ratio": sorted_completion_ratio,
             "cache_ratio": sorted_cache_ratio,
+            "create_cache_ratio": sorted_create_cache_ratio,
             "model_price": sorted_model_price,
             "billing_mode": sorted_billing_mode,
             "billing_expr": sorted_billing_expr,
@@ -577,9 +599,11 @@ def main():
     print("="*55)
     for m, r in sorted_model_ratio.items():
         comp = sorted_completion_ratio.get(m, 1.0)
-        cache = sorted_cache_ratio.get(m, 0.0)
+        cache_r = sorted_cache_ratio.get(m, 0.0)
+        cache_w = sorted_create_cache_ratio.get(m, 0.0)
         mode = f"[{sorted_billing_mode.get(m)}]" if m in sorted_billing_mode else ""
-        print(f"  * {m:<28} 输入: {r:<8} 补全: {comp:<7} 缓存: {cache:<6} {mode}")
+        cw_str = f"写: {cache_w:<6}" if cache_w > 0 else " "*11
+        print(f"  * {m:<28} 输入: {r:<7} 补全: {comp:<6} 读: {cache_r:<6} {cw_str} {mode}")
 
     if sorted_billing_expr:
         print(f"\n⚡ [New API 阶梯计费表达式 ({len(sorted_billing_expr)} 个)]:")
