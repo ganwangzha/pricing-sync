@@ -113,26 +113,26 @@ OFFICIAL_MODELS = {
     "gpt-6-astra": {
         "provider": "OpenAI",
         "in": 10.0,
-        "out": 12.5,
+        "out": 50.0,
         "cache": 1.0,
     },
     # GPT-5 系列
     "gpt-5.6-sol": {
         "provider": "OpenAI",
         "in": 4.0,
-        "out": 5.0,
+        "out": 20.0,
         "cache": 0.4,
     },
     "gpt-5.6-terra": {
         "provider": "OpenAI",
         "in": 2.0,
-        "out": 2.5,
+        "out": 12.0,
         "cache": 0.2,
     },
     "gpt-5.6-luna": {
         "provider": "OpenAI",
         "in": 0.2,
-        "out": 0.25,
+        "out": 1.2,
         "cache": 0.02,
     },
     "gpt-5.4-mini": {
@@ -140,6 +140,12 @@ OFFICIAL_MODELS = {
         "in": 0.75,
         "out": 4.5,
         "cache": 0.075,
+    },
+    "gpt-5.4-nano": {
+        "provider": "OpenAI",
+        "in": 0.20,
+        "out": 1.25,
+        "cache": 0.02,
     },
     "gpt-5.2": {
         "provider": "OpenAI",
