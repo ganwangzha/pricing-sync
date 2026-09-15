@@ -10,5 +10,11 @@
     "url": "https://openai.com/api/pricing/",
     "currency": "USD",
     "description": "OpenAI 定价"
+  },
+  {
+    "provider": "Anthropic",
+    "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+    "currency": "USD",
+    "description": "Anthropic 定价"
   }
 ]
