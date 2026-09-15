@@ -2,7 +2,7 @@
 
 本项目为 **New API / bita-api** 提供一套轻量、可控、透明的模型价格同步数据源工程。
 
-通过本地配置文件维护官方价格页与按次计费模型，每周通过本地脚本或 AI 工具一键提取并换算，产出符合 New API 原生标准的 `ratio_config.json`，并通过私有化 GitLab 供 New API 一键同步入库。
+通过本地配置文件维护官方价格页与按次计费模型，每周通过本地脚本或 AI 工具一键提取并换算，产出符合 New API 原生标准的 `ratio_config.json`，托管于 GitHub 并供 New API 一键同步入库。
 
 ---
 
@@ -10,12 +10,13 @@
 
 ```text
 pricing-sync/
+├── .github/workflows/   # GitHub Actions 自动化校验工作流
+│   └── validate.yml
 ├── providers.json       # 官网价格页配置表（人维护：URL、货币、厂商）
 ├── overrides.json       # 本地自定义与按次计费模型（Midjourney、Flux、私有模型）
 ├── ratio_config.json    # 最终生成并对外发布的标准比率文件（供 New API 读取）
 ├── sync.py              # 价格提取、比率换算与文件生成核心脚本
 ├── requirements.txt     # Python 可选扩展依赖
-├── .gitlab-ci.yml       # GitLab CI/CD 自动校验与 Pages 静态发布配置
 └── .gitignore           # 忽略文件
 ```
 
@@ -86,26 +87,20 @@ python3 sync.py --provider Aliyun-Qwen
 
 ---
 
-## 托管到私有化 GitLab
+## 托管到 GitHub
 
-### 1. 首次推送到私有 GitLab
-在公司的私有 GitLab 上新建一个项目（例如 `llm/pricing-sync`），然后在本地执行：
-```bash
-cd /Users/ganwangzha/leinao/token-factory/pricing-sync
-git init
-git add .
-git commit -m "feat: initial pricing-sync project"
-git branch -M main
-git remote add origin http://gitlab.yourcompany.com/llm/pricing-sync.git
-git push -u origin main
-```
+当前项目托管于 GitHub：[`ganwangzha/pricing-sync`](https://github.com/ganwangzha/pricing-sync)。
 
-### 2. 每周更新后一键推送
+### 每周更新与推送流程
+
 ```bash
+# 1. 运行同步脚本更新比率
 python3 sync.py
+
+# 2. 提交更新后的比率文件并推送到 GitHub
 git add ratio_config.json
 git commit -m "chore: update pricing $(date +%F)"
-git push
+git push origin main
 ```
 
 ---
@@ -117,33 +112,36 @@ git push
 ### 步骤 1：添加同步渠道
 1. 打开 **渠道** $\to$ **添加渠道**。
 2. **类型**：随意（如 `自定义` 或 `OpenAI`）。
-3. **名称**：`私有价格同步源 (GitLab)`。
-4. **代理地址 (Base URL)**：填入 GitLab 域名，例如：
-   ```text
-   http://gitlab.yourcompany.com
-   ```
-5. **密钥 (Key)**：任意填写占位字符（如 `dummy`）。
+3. **名称**：`价格同步源 (GitHub)`。
+4. **代理地址 (Base URL)**：根据服务器网络环境选择填入（见下方方案）。
+5. **密钥 (Key)**：任意填写占位字符（如 `dummy`，若为私有仓库填 GitHub Token）。
 
-### 步骤 2：配置 Endpoint 提取价格
+---
 
-#### 情形 A：GitLab 仓库是内部公开的（Internal / Public）
-进入 **系统设置** $\to$ **运营设置**（或 **比率设置**） $\to$ 点击 **「同步倍率」**：
-* 勾选 `私有价格同步源 (GitLab)` 渠道；
-* Endpoint 选择 `custom`，输入 Raw 路径：
+### 步骤 2：配置 Endpoint 并同步比率
+
+进入 **系统设置** $\to$ **运营设置**（或 **比率设置**） $\to$ 点击 **「同步倍率」**，勾选 `价格同步源 (GitHub)` 渠道：
+
+#### 方案 A：CDN 加速拉取（国内服务器强烈推荐 ⭐）
+若部署 New API 的服务器位于中国大陆境内，直连 GitHub Raw 容易出现网络超时或连接失败，推荐使用 jsDelivr CDN 加速：
+* **渠道 Base URL**：`https://fastly.jsdelivr.net`（或 `https://cdn.jsdelivr.net`）
+* **Endpoint (提取路径)**：
   ```text
-  /<group>/<project>/-/raw/main/ratio_config.json
+  /gh/ganwangzha/pricing-sync@main/ratio_config.json
+  ```
+* 点击 **获取** 即可秒级拉取并进行高亮比对！
+
+#### 方案 B：GitHub Raw 直连（海外服务器）
+若部署 New API 的服务器位于海外或具备稳定的 GitHub 访问链路：
+* **渠道 Base URL**：`https://raw.githubusercontent.com`
+* **Endpoint (提取路径)**：
+  ```text
+  /ganwangzha/pricing-sync/main/ratio_config.json
   ```
 * 点击 **获取** 即可拉取并进行高亮比对！
 
-#### 情形 B：GitLab 仓库是私有的（Private）
-如果仓库受权限保护，在 GitLab 中生成一个只读 Project Access Token：
-1. GitLab 项目 $\to$ **Settings** $\to$ **Access Tokens**。
-2. 权限仅勾选 **`read_repository`**，生成 token（如 `glpat-xxxxxxxxxxxx`）。
-3. 在 New API 同步倍率弹窗中，Endpoint 选择 `custom` 并带上 Token 参数：
-   ```text
-   /<group>/<project>/-/raw/main/ratio_config.json?private_token=glpat-xxxxxxxxxxxx
-   ```
-4. 点击 **获取**，New API 将安全拉取文件并展示对比差异。
-
-#### 情形 C：开启了 GitLab Pages
-如果使用了 GitLab Pages，直接将渠道 Base URL 设为 Pages 根地址，Endpoint 填 `/ratio_config.json` 即可。
+#### 方案 C：私有仓库（Private 访问）
+若未来将仓库转为私有：
+1. 在 GitHub **Settings** $\to$ **Developer settings** $\to$ **Personal access tokens** 生成一个只读 Token（具备 `repo` 权限）。
+2. 在渠道中将 **密钥 (Key)** 设置为你的 GitHub Token（或在 Endpoint 结尾附加 `?token=YOUR_TOKEN`）。
+3. Base URL 依然使用 `https://raw.githubusercontent.com`，Endpoint 填入私有 Raw 路径。

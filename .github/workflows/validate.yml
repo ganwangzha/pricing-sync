@@ -1,0 +1,32 @@
+name: Validate Pricing Config
+
+on:
+  push:
+    paths:
+      - 'ratio_config.json'
+      - 'overrides.json'
+      - 'providers.json'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - 'ratio_config.json'
+      - 'overrides.json'
+      - 'providers.json'
+      - '.github/workflows/**'
+
+jobs:
+  validate:
+    name: Validate JSON Structure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate ratio_config.json
+        run: |
+          python3 -c "import json; d = json.load(open('ratio_config.json')); assert d.get('success') is True, '缺少 success 字段'; assert 'model_ratio' in d.get('data', {}), '缺少 model_ratio 字段'; print('✅ JSON 格式校验通过！')"
