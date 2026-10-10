@@ -7,7 +7,7 @@
   },
   {
     "provider": "OpenAI",
-    "url": "https://openai.com/api/pricing/",
+    "url": "https://developers.openai.com/api/docs/pricing",
     "currency": "USD",
     "description": "OpenAI 定价"
   },

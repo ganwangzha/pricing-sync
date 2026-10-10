@@ -142,6 +142,48 @@ OFFICIAL_MODELS = {
             "cache_write": 25.0,
         },
     },
+    "gpt-6.1-sol": {
+        "provider": "OpenAI",
+        "in": 2.0,
+        "out": 10.0,
+        "cache": 0.10,
+        "cache_write": 2.50,
+        "tier": {
+            "threshold": 272000,
+            "in": 4.0,
+            "out": 15.0,
+            "cache": 0.20,
+            "cache_write": 5.0,
+        },
+    },
+    "gpt-6-sol": {
+        "provider": "OpenAI",
+        "in": 2.0,
+        "out": 10.0,
+        "cache": 0.20,
+        "cache_write": 2.50,
+        "tier": {
+            "threshold": 272000,
+            "in": 4.0,
+            "out": 15.0,
+            "cache": 0.40,
+            "cache_write": 5.0,
+        },
+    },
+    "gpt-6-luna": {
+        "provider": "OpenAI",
+        "in": 0.10,
+        "out": 0.50,
+        "cache": 0.01,
+        "cache_write": 0.125,
+        "tier": {
+            "threshold": 272000,
+            "in": 0.20,
+            "out": 0.75,
+            "cache": 0.02,
+            "cache_write": 0.25,
+        },
+    },
     # GPT-5 系列
     "gpt-5.6-sol": {
         "provider": "OpenAI",
@@ -191,6 +233,12 @@ OFFICIAL_MODELS = {
         "out": 75.0,
         "cache": 1.25,
         "cache_write": 15.625,
+    },
+    "gpt-5.5-cyber": {
+        "provider": "OpenAI",
+        "in": 12.5,
+        "out": 75.0,
+        "cache": 1.25,
     },
     "gpt-5.5": {
         "provider": "OpenAI",
@@ -258,6 +306,12 @@ OFFICIAL_MODELS = {
         "out": 14.0,
         "cache": 0.175,
     },
+    "gpt-5.2-pro": {
+        "provider": "OpenAI",
+        "in": 21.0,
+        "out": 168.0,
+        "cache": 0.0,
+    },
     "gpt-5.1": {
         "provider": "OpenAI",
         "in": 1.25,
@@ -269,6 +323,12 @@ OFFICIAL_MODELS = {
         "in": 1.25,
         "out": 10.0,
         "cache": 0.125,
+    },
+    "gpt-5-pro": {
+        "provider": "OpenAI",
+        "in": 15.0,
+        "out": 120.0,
+        "cache": 0.0,
     },
     "gpt-5-mini": {
         "provider": "OpenAI",
@@ -387,6 +447,45 @@ OFFICIAL_MODELS = {
         "in": 0.10,
         "out": 0.0,
         "cache": 0.0,
+    },
+    # 动态与搜索模型
+    "chat-latest": {
+        "provider": "OpenAI",
+        "in": 5.0,
+        "out": 30.0,
+        "cache": 0.50,
+    },
+    "gpt-5-search-api": {
+        "provider": "OpenAI",
+        "in": 1.25,
+        "out": 10.0,
+        "cache": 0.125,
+    },
+    # 生命科学模型 (Rosalind)
+    "gpt-rosalind-research": {
+        "provider": "OpenAI",
+        "in": 5.0,
+        "out": 25.0,
+        "cache": 0.50,
+    },
+    "gpt-rosalind-discovery": {
+        "provider": "OpenAI",
+        "in": 5.0,
+        "out": 25.0,
+        "cache": 0.50,
+    },
+    # 实时对话模型 (Realtime)
+    "gpt-realtime-2.1": {
+        "provider": "OpenAI",
+        "in": 4.0,
+        "out": 24.0,
+        "cache": 0.40,
+    },
+    "gpt-realtime-2.1-mini": {
+        "provider": "OpenAI",
+        "in": 0.60,
+        "out": 2.40,
+        "cache": 0.06,
     },
     # --------------------------------------------------------------------------
     # Anthropic 官方核心模型
