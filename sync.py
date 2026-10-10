@@ -505,7 +505,29 @@ OFFICIAL_MODELS = {
         "cache": 1.00,
         "cache_write": 12.50,
     },
+    # Claude Mythos 5 系列 (限量开放)
+    "claude-mythos-5-1": {
+        "provider": "Anthropic",
+        "in": 10.00,
+        "out": 50.00,
+        "cache": 0.25,
+        "cache_write": 12.50,
+    },
+    "claude-mythos-5": {
+        "provider": "Anthropic",
+        "in": 10.00,
+        "out": 50.00,
+        "cache": 1.00,
+        "cache_write": 12.50,
+    },
     # Claude Opus 5 系列
+    "claude-opus-5-5": {
+        "provider": "Anthropic",
+        "in": 4.00,
+        "out": 20.00,
+        "cache": 0.20,
+        "cache_write": 5.00,
+    },
     "claude-opus-5": {
         "provider": "Anthropic",
         "in": 5.00,
@@ -578,6 +600,13 @@ OFFICIAL_MODELS = {
         "cache_write": 18.75,
     },
     # Claude Sonnet 5 系列
+    "claude-sonnet-5-5": {
+        "provider": "Anthropic",
+        "in": 2.00,
+        "out": 10.00,
+        "cache": 0.10,
+        "cache_write": 2.50,
+    },
     "claude-sonnet-5": {
         "provider": "Anthropic",
         "in": 2.00,
@@ -620,6 +649,21 @@ OFFICIAL_MODELS = {
         "out": 15.00,
         "cache": 0.30,
         "cache_write": 3.75,
+    },
+    # Claude Haiku 5.5 (prompt > 100K tokens 时整单按高价计费)
+    "claude-haiku-5-5": {
+        "provider": "Anthropic",
+        "in": 0.10,
+        "out": 0.50,
+        "cache": 0.01,
+        "cache_write": 0.125,
+        "tier": {
+            "threshold": 100000,
+            "in": 0.50,
+            "out": 2.50,
+            "cache": 0.05,
+            "cache_write": 0.625,
+        },
     },
     # Claude Haiku 4.5 系列
     "claude-haiku-4-5": {
