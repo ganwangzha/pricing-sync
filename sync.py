@@ -28,6 +28,13 @@ CNY_TO_USD = 1.0 / DEFAULT_USD_TO_CNY
 # 官方核心厂商模型基准 (Google-Gemini 最新模型列表)
 # ==============================================================================
 OFFICIAL_MODELS = {
+    # Gemini 4 Argon (促销价截至 2026-11-30；2026-12-01 起涨至 in 4.00 / out 20.00 / cache 0.20)
+    "gemini-4-argon": {
+        "provider": "Google-Gemini",
+        "in": 2.00,
+        "out": 10.00,
+        "cache": 0.10,
+    },
     # Gemini 3.8 / 3.7 / 3.6 Flash (享受 2026-12-31 前促销半价)
     "gemini-3.8-flash": {
         "provider": "Google-Gemini",
