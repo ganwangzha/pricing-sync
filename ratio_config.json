@@ -1,6 +1,6 @@
 {
   "success": true,
-  "message": "Updated at 2026-10-16 10:33:32",
+  "message": "Updated at 2026-10-28 15:24:59",
   "data": {
     "model_ratio": {
       "chat-latest": 2.5,
@@ -91,6 +91,7 @@
       "gpt-6-luna": 0.05,
       "gpt-6-sol": 1.0,
       "gpt-6.1-sol": 1.0,
+      "gpt-6.1-terra": 0.5,
       "gpt-realtime-2.1": 2.0,
       "gpt-realtime-2.1-mini": 0.3,
       "gpt-rosalind-discovery": 2.5,
@@ -193,6 +194,7 @@
       "gpt-6-luna": 5.0,
       "gpt-6-sol": 5.0,
       "gpt-6.1-sol": 5.0,
+      "gpt-6.1-terra": 5.0,
       "gpt-realtime-2.1": 6.0,
       "gpt-realtime-2.1-mini": 4.0,
       "gpt-rosalind-discovery": 5.0,
@@ -286,6 +288,7 @@
       "gpt-6-luna": 0.1,
       "gpt-6-sol": 0.1,
       "gpt-6.1-sol": 0.05,
+      "gpt-6.1-terra": 0.05,
       "gpt-realtime-2.1": 0.1,
       "gpt-realtime-2.1-mini": 0.1,
       "gpt-rosalind-discovery": 0.1,
@@ -345,7 +348,8 @@
       "gpt-6-astra": 1.25,
       "gpt-6-luna": 1.25,
       "gpt-6-sol": 1.25,
-      "gpt-6.1-sol": 1.25
+      "gpt-6.1-sol": 1.25,
+      "gpt-6.1-terra": 1.25
     },
     "model_price": {},
     "billing_mode": {
@@ -362,7 +366,8 @@
       "gpt-6-astra": "tiered_expr",
       "gpt-6-luna": "tiered_expr",
       "gpt-6-sol": "tiered_expr",
-      "gpt-6.1-sol": "tiered_expr"
+      "gpt-6.1-sol": "tiered_expr",
+      "gpt-6.1-terra": "tiered_expr"
     },
     "billing_expr": {
       "claude-haiku-5-5": "len <= 100000 ? tier(\"0_100k\", p * 0.1 + c * 0.5 + cr * 0.01 + cc * 0.125) : tier(\"100k_plus\", p * 0.5 + c * 2.5 + cr * 0.05 + cc * 0.625)",
@@ -378,7 +383,8 @@
       "gpt-6-astra": "len <= 272000 ? tier(\"0_272k\", p * 10 + c * 50 + cr * 1 + cc * 12.5) : tier(\"272k_plus\", p * 20 + c * 75 + cr * 2 + cc * 25)",
       "gpt-6-luna": "len <= 272000 ? tier(\"0_272k\", p * 0.1 + c * 0.5 + cr * 0.01 + cc * 0.125) : tier(\"272k_plus\", p * 0.2 + c * 0.75 + cr * 0.02 + cc * 0.25)",
       "gpt-6-sol": "len <= 272000 ? tier(\"0_272k\", p * 2 + c * 10 + cr * 0.2 + cc * 2.5) : tier(\"272k_plus\", p * 4 + c * 15 + cr * 0.4 + cc * 5)",
-      "gpt-6.1-sol": "len <= 272000 ? tier(\"0_272k\", p * 2 + c * 10 + cr * 0.1 + cc * 2.5) : tier(\"272k_plus\", p * 4 + c * 15 + cr * 0.2 + cc * 5)"
+      "gpt-6.1-sol": "len <= 272000 ? tier(\"0_272k\", p * 2 + c * 10 + cr * 0.1 + cc * 2.5) : tier(\"272k_plus\", p * 4 + c * 15 + cr * 0.2 + cc * 5)",
+      "gpt-6.1-terra": "len <= 272000 ? tier(\"0_272k\", p * 1 + c * 5 + cr * 0.05 + cc * 1.25) : tier(\"272k_plus\", p * 2 + c * 7.5 + cr * 0.1 + cc * 2.5)"
     }
   }
 }

@@ -163,6 +163,20 @@ OFFICIAL_MODELS = {
             "cache_write": 5.0,
         },
     },
+    "gpt-6.1-terra": {
+        "provider": "OpenAI",
+        "in": 1.0,
+        "out": 5.0,
+        "cache": 0.05,
+        "cache_write": 1.25,
+        "tier": {
+            "threshold": 272000,
+            "in": 2.0,
+            "out": 7.5,
+            "cache": 0.10,
+            "cache_write": 2.50,
+        },
+    },
     "gpt-6-sol": {
         "provider": "OpenAI",
         "in": 2.0,
