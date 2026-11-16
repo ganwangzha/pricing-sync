@@ -28,12 +28,24 @@ CNY_TO_USD = 1.0 / DEFAULT_USD_TO_CNY
 # 官方核心厂商模型基准 (Google-Gemini 最新模型列表)
 # ==============================================================================
 OFFICIAL_MODELS = {
-    # Gemini 4 Argon (促销价截至 2026-11-30；2026-12-01 起涨至 in 4.00 / out 20.00 / cache 0.20)
+    # Gemini 4 系列 (Carbon/Argon 促销价截至 2026-11-30；2026-12-01 起涨至 in 4.00 / out 20.00 / cache 0.20)
+    "gemini-4-carbon": {
+        "provider": "Google-Gemini",
+        "in": 2.00,
+        "out": 10.00,
+        "cache": 0.10,
+    },
     "gemini-4-argon": {
         "provider": "Google-Gemini",
         "in": 2.00,
         "out": 10.00,
         "cache": 0.10,
+    },
+    "gemini-4-hydrogen": {
+        "provider": "Google-Gemini",
+        "in": 1.50,
+        "out": 7.50,
+        "cache": 0.075,
     },
     # Gemini 3.8 / 3.7 / 3.6 Flash (享受 2026-12-31 前促销半价)
     "gemini-3.8-flash": {
@@ -118,16 +130,40 @@ OFFICIAL_MODELS = {
         "out": 0.40,
         "cache": 0.01,
     },
+    "gemini-omni-1.2-flash": {
+        "provider": "Google-Gemini",
+        "in": 1.50,
+        "out": 9.00,
+        "cache": 0.00,
+    },
+    "gemini-omni-1.1-flash": {
+        "provider": "Google-Gemini",
+        "in": 1.50,
+        "out": 9.00,
+        "cache": 0.00,
+    },
     "gemini-omni-flash": {
         "provider": "Google-Gemini",
         "in": 1.50,
         "out": 9.00,
         "cache": 0.15,
     },
-    # 向量嵌入
+    # 决策与向量嵌入
+    "gemini-decision": {
+        "provider": "Google-Gemini",
+        "in": 0.10,
+        "out": 0.00,
+        "cache": 0.00,
+    },
     "gemini-embedding-2": {
         "provider": "Google-Gemini",
         "in": 0.20,
+        "out": 0.00,
+        "cache": 0.00,
+    },
+    "gemini-embedding": {
+        "provider": "Google-Gemini",
+        "in": 0.15,
         "out": 0.00,
         "cache": 0.00,
     },
@@ -507,6 +543,31 @@ OFFICIAL_MODELS = {
         "in": 0.60,
         "out": 2.40,
         "cache": 0.06,
+    },
+    # 图像生成模型 (GPT-Image 2.6，按 Image 模态 Token 标准价计费)
+    "gpt-image-2.6-sunburst": {
+        "provider": "OpenAI",
+        "in": 8.0,
+        "out": 30.0,
+        "cache": 2.0,
+    },
+    "gpt-image-2.6-flare": {
+        "provider": "OpenAI",
+        "in": 8.0,
+        "out": 30.0,
+        "cache": 2.0,
+    },
+    "gpt-image-2.6": {
+        "provider": "OpenAI",
+        "in": 8.0,
+        "out": 30.0,
+        "cache": 2.0,
+    },
+    "gpt-image-2-6": {
+        "provider": "OpenAI",
+        "in": 8.0,
+        "out": 30.0,
+        "cache": 2.0,
     },
     # --------------------------------------------------------------------------
     # Anthropic 官方核心模型
