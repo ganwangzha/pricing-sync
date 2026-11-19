@@ -171,6 +171,87 @@ OFFICIAL_MODELS = {
     # OpenAI 官方核心模型
     # --------------------------------------------------------------------------
     # GPT-6 系列
+    "gpt-6.2-astra": {
+        "provider": "OpenAI",
+        "in": 8.0,
+        "out": 40.0,
+        "cache": 0.40,
+        "cache_write": 10.0,
+        "tier": {
+            "threshold": 272000,
+            "in": 16.0,
+            "out": 60.0,
+            "cache": 0.80,
+            "cache_write": 20.0,
+        },
+    },
+    "gpt-6.2-sol": {
+        "provider": "OpenAI",
+        "in": 2.0,
+        "out": 10.0,
+        "cache": 0.10,
+        "cache_write": 2.50,
+        "tier": {
+            "threshold": 272000,
+            "in": 4.0,
+            "out": 15.0,
+            "cache": 0.20,
+            "cache_write": 5.0,
+        },
+    },
+    "gpt-6.2-astra-law": {
+        "provider": "OpenAI",
+        "in": 8.0,
+        "out": 40.0,
+        "cache": 0.40,
+        "cache_write": 10.0,
+        "tier": {
+            "threshold": 272000,
+            "in": 16.0,
+            "out": 60.0,
+            "cache": 0.80,
+            "cache_write": 20.0,
+        },
+    },
+    "gpt-6-astra-law": {
+        "provider": "OpenAI",
+        "in": 10.0,
+        "out": 50.0,
+        "cache": 1.0,
+        "tier": {
+            "threshold": 272000,
+            "in": 20.0,
+            "out": 75.0,
+            "cache": 2.0,
+        },
+    },
+    "gpt-6-cyber": {
+        "provider": "OpenAI",
+        "in": 20.0,
+        "out": 100.0,
+        "cache": 2.0,
+        "cache_write": 25.0,
+        "tier": {
+            "threshold": 272000,
+            "in": 40.0,
+            "out": 150.0,
+            "cache": 4.0,
+        },
+    },
+    "gpt-6-rosalind": {
+        "provider": "OpenAI",
+        "in": 10.0,
+        "out": 50.0,
+        "cache": 1.0,
+        "cache_write": 12.5,
+        "tier": {
+            "threshold": 272000,
+            "in": 20.0,
+            "out": 75.0,
+            "cache": 2.0,
+            "cache_write": 25.0,
+        },
+    },
     "gpt-6-astra": {
         "provider": "OpenAI",
         "in": 10.0,
